@@ -1,43 +1,40 @@
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:easy_permission_validator/easy_permission_validator.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
-
 //Component
 import 'package:smartsocietystaff/Common/Constants.dart';
+import 'package:smartsocietystaff/Component/NotificationAnswerDialog.dart';
+import 'package:smartsocietystaff/Screens/AddDocument.dart';
 import 'package:smartsocietystaff/Screens/AddEvent.dart';
+import 'package:smartsocietystaff/Screens/AddNotice.dart';
 import 'package:smartsocietystaff/Screens/AddRules.dart';
 import 'package:smartsocietystaff/Screens/AddVisitorForm.dart';
 import 'package:smartsocietystaff/Screens/BalanceSheet.dart';
 import 'package:smartsocietystaff/Screens/Complaints.dart';
+import 'package:smartsocietystaff/Screens/Dashboard.dart';
+import 'package:smartsocietystaff/Screens/Directory.dart';
 import 'package:smartsocietystaff/Screens/Document.dart';
-import 'package:smartsocietystaff/Screens/Staff.dart';
-import 'package:smartsocietystaff/Screens/StaffInOut.dart';
-import 'package:smartsocietystaff/Screens/StaffProfile.dart';
 import 'package:smartsocietystaff/Screens/Emergency.dart';
 import 'package:smartsocietystaff/Screens/Events.dart';
 import 'package:smartsocietystaff/Screens/Expense.dart';
 import 'package:smartsocietystaff/Screens/ExpenseByMonth.dart';
 import 'package:smartsocietystaff/Screens/Income.dart';
 import 'package:smartsocietystaff/Screens/IncomeByMonth.dart';
-
 //Screens
 import 'package:smartsocietystaff/Screens/Login.dart';
-import 'package:smartsocietystaff/Screens/Dashboard.dart';
-import 'package:smartsocietystaff/Screens/AddNotice.dart';
-import 'package:smartsocietystaff/Screens/AddDocument.dart';
-import 'package:smartsocietystaff/Screens/Directory.dart';
 import 'package:smartsocietystaff/Screens/MemberProfile.dart';
 import 'package:smartsocietystaff/Screens/Notice.dart';
 import 'package:smartsocietystaff/Screens/Polling.dart';
 import 'package:smartsocietystaff/Screens/Splash.dart';
+import 'package:smartsocietystaff/Screens/Staff.dart';
+import 'package:smartsocietystaff/Screens/StaffInOut.dart';
 import 'package:smartsocietystaff/Screens/Visitor.dart';
 import 'package:smartsocietystaff/Screens/VisitorHistoryList.dart';
 import 'package:smartsocietystaff/Screens/WatchmanDashboard.dart';
-import 'package:smartsocietystaff/Screens/watchmanVisitorList.dart';
-import 'package:smartsocietystaff/Component/NotificationAnswerDialog.dart';
 
 import 'Screens/AddAMC.dart';
 import 'Screens/AddExpense.dart';
@@ -88,6 +85,11 @@ class _MyAppState extends State<MyApp> {
     var iOS = new IOSInitializationSettings();
     var initSetttings = new InitializationSettings(android, iOS);
     flutterLocalNotificationsPlugin.initialize(initSetttings);
+    final permissionValidator = EasyPermissionValidator(
+      context: context,
+      appName: 'Easy Permission Validator',
+    );
+    permissionValidator.microphone();
   }
 
   @override

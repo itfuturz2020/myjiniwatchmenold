@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:barcode_scan/barcode_scan.dart';
+import 'package:easy_permission_validator/easy_permission_validator.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,9 +11,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smartsocietystaff/Common/Constants.dart';
-import 'package:smartsocietystaff/Common/Services.dart';
-
 import 'package:smartsocietystaff/Common/Constants.dart' as cnst;
+import 'package:smartsocietystaff/Common/Services.dart';
 import 'package:smartsocietystaff/Component/LoadingComponent.dart';
 import 'package:smartsocietystaff/Screens/MemberProfile.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -158,6 +158,11 @@ class _DashboardState extends State<Dashboard> {
     } else {
       saveDeviceToken();
     }
+    final permissionValidator = EasyPermissionValidator(
+      context: context,
+      appName: 'Easy Permission Validator',
+    );
+    permissionValidator.camera();
   }
 
   saveDeviceToken() async {
@@ -360,7 +365,6 @@ class _DashboardState extends State<Dashboard> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-
         return AlertDialog(
           title: new Text(title),
           content: new Text(msg),

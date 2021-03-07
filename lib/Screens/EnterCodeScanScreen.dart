@@ -979,6 +979,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:easy_permission_validator/easy_permission_validator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -1051,6 +1052,11 @@ class _EnterCodeScanScreenState extends State<EnterCodeScanScreen>
         messageTextStyle: TextStyle(
             color: Colors.black, fontSize: 17.0, fontWeight: FontWeight.w600));
     super.initState();
+    final permissionValidator = EasyPermissionValidator(
+      context: context,
+      appName: 'Easy Permission Validator',
+    );
+    permissionValidator.camera();
   }
 
   void dispose() {
