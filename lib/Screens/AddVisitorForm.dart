@@ -35,6 +35,7 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
   TextEditingController mobilenotext = new TextEditingController();
   TextEditingController vehiclenotext = new TextEditingController();
   TextEditingController purposeText = new TextEditingController();
+  TextEditingController temperatureText = new TextEditingController();
   PermissionStatus _permissionStatus = PermissionStatus.unknown;
 
   int selected_Index;
@@ -61,6 +62,8 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
 
   List<WingClass> _winglist = [];
   WingClass _wingClass;
+  bool mask = false;
+  bool sanitized = false;
 
   @override
   void initState() {
@@ -277,15 +280,19 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
                       filename: filename.toString())
                   : null,
               "CompanyImage": _selectedCompanyLogo,
-              "WatchmanId": WatchManId
+              "WatchmanId": WatchManId,
+              "isMask": mask == true ? "1" : "0",
+              "isSanitize": sanitized == true ? "1" : "0",
+              "Temperature": temperatureText.text.toString(),
             });
 
             print("Save visitorData Data = ${formData.fields}");
-           Services.SaveVisitorsV1(formData).then((data) async {
+            Services.SaveVisitorsV1(formData).then((data) async {
               pr.hide();
               if (data.Data != "0" && data.IsSuccess == true) {
                 print("smit watchman1 ${data.Data}");
-                SharedPreferences preferences = await SharedPreferences.getInstance();
+                SharedPreferences preferences =
+                    await SharedPreferences.getInstance();
                 await preferences.setString('data', data.Data);
                 showMsg(data.Message, title: "Success");
               } else {
@@ -669,6 +676,84 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
                       labelStyle: TextStyle(fontSize: 13)),
                 ),
               ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: SizedBox(
+                height: 50,
+                child: TextFormField(
+                  controller: temperatureText,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                      border: new OutlineInputBorder(
+                        borderRadius: new BorderRadius.circular(5.0),
+                        borderSide: new BorderSide(),
+                      ),
+                      counterText: "",
+                      labelText: "Temperature",
+                      hasFloatingPlaceholder: true,
+                      labelStyle: TextStyle(fontSize: 13)),
+                ),
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Card(
+                  elevation: 2,
+                  color: Colors.deepPurple.withOpacity(0.85),
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 15.0, right: 5.0),
+                    child: Row(
+                      children: [
+                        Text(
+                          'Mask On',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        ),
+                        Checkbox(
+                          value: mask,
+                          onChanged: (bool value) {
+                            setState(() {
+                              mask = value;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Card(
+                  elevation: 2,
+                  color: Colors.deepPurple.withOpacity(0.85),
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 15.0, right: 5.0),
+                    child: Row(
+                      children: [
+                        Text(
+                          'Sanitized',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        ),
+                        Checkbox(
+                          value: sanitized,
+                          onChanged: (bool value) {
+                            setState(() {
+                              sanitized = value;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,

@@ -231,7 +231,6 @@ class _AddStaffState extends State<AddStaff> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-
         return AlertDialog(
           title: new Text(title),
           content: new Text(msg),
@@ -1004,7 +1003,7 @@ class _AddStaffState extends State<AddStaff> {
                               },
                             ),
                           ),
-                        )
+                        ),
                       ],
                     ),
                   ),
