@@ -1050,7 +1050,10 @@ class _EnterCodeScanScreenState extends State<EnterCodeScanScreen>
         elevation: 10.0,
         insetAnimCurve: Curves.easeInOut,
         messageTextStyle: TextStyle(
-            color: Colors.black, fontSize: 17.0, fontWeight: FontWeight.w600));
+          color: Colors.black,
+          fontSize: 17.0,
+          fontWeight: FontWeight.w600,
+        ));
     super.initState();
     final permissionValidator = EasyPermissionValidator(
       context: context,

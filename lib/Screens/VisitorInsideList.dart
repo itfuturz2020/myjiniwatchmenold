@@ -4,9 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:smartsocietystaff/Common/Services.dart';
 import 'package:smartsocietystaff/Component/NoDataComponent.dart';
 import 'package:smartsocietystaff/Component/VisitorInsideComponent.dart';
-import 'package:smartsocietystaff/Component/VisitorInsideComponent.dart';
-import 'package:smartsocietystaff/Component/VisitorOutSideComponent.dart';
-import 'package:smartsocietystaff/Common/Constants.dart' as constant;
 
 class VisitorInsideList extends StatefulWidget {
   @override
@@ -36,6 +33,7 @@ class _VisitorInsideListState extends State<VisitorInsideList> {
               _visitorInsideList = data;
               isLoading = false;
             });
+            _visitorInsideList = _visitorInsideList.reversed.toList();
           } else {
             setState(() {
               _visitorInsideList = data;
@@ -61,7 +59,6 @@ class _VisitorInsideListState extends State<VisitorInsideList> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-
         return AlertDialog(
           title: new Text(title),
           content: new Text(msg),
@@ -86,7 +83,8 @@ class _VisitorInsideListState extends State<VisitorInsideList> {
             : _visitorInsideList.length > 0
                 ? ListView.builder(
                     itemBuilder: (BuildContext context, int index) {
-                      return VisitorInsideComponent(_visitorInsideList[index],index, (type) {
+                      return VisitorInsideComponent(
+                          _visitorInsideList[index], index, (type) {
                         if (type == "false")
                           setState(() {
                             _getInsideVisitor();

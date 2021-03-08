@@ -3,10 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:smartsocietystaff/Common/Services.dart';
 import 'package:smartsocietystaff/Component/NoDataComponent.dart';
-import 'package:smartsocietystaff/Component/VisitorInsideComponent.dart';
-import 'package:smartsocietystaff/Component/VisitorInsideComponent.dart';
 import 'package:smartsocietystaff/Component/VisitorOutSideComponent.dart';
-import 'package:smartsocietystaff/Common/Constants.dart' as constant;
 
 class VisitorOutSideList extends StatefulWidget {
   @override
@@ -36,6 +33,7 @@ class _VisitorOutSideListState extends State<VisitorOutSideList> {
               _visitorInsideList = data;
               isLoading = false;
             });
+            _visitorInsideList = _visitorInsideList.reversed.toList();
           } else {
             setState(() {
               isLoading = false;
@@ -60,7 +58,6 @@ class _VisitorOutSideListState extends State<VisitorOutSideList> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-
         return AlertDialog(
           title: new Text(title),
           content: new Text(msg),
@@ -87,7 +84,8 @@ class _VisitorOutSideListState extends State<VisitorOutSideList> {
               : _visitorInsideList.length > 0
                   ? ListView.builder(
                       itemBuilder: (BuildContext context, int index) {
-                        return VisitorOutSideComponent(_visitorInsideList[index]);
+                        return VisitorOutSideComponent(
+                            _visitorInsideList[index]);
                       },
                       itemCount: _visitorInsideList.length,
                     )

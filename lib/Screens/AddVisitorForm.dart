@@ -12,10 +12,10 @@ import 'package:progress_dialog/progress_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smartsocietystaff/Common/ClassList.dart';
 import 'package:smartsocietystaff/Common/Constants.dart';
+import 'package:smartsocietystaff/Common/Constants.dart' as constant;
 import 'package:smartsocietystaff/Common/Services.dart';
 import 'package:smartsocietystaff/Component/masktext.dart';
 import 'package:speech_recognition/speech_recognition.dart';
-import 'package:smartsocietystaff/Common/Constants.dart' as constant;
 
 class AddVisitorForm extends StatefulWidget {
   String visitortype;
@@ -441,50 +441,54 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
             ),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.all(6.0),
-          child: Text(
-            "Company Name",
-            style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-          ),
-        ),
-        InkWell(
-          onTap: () {
-            if (CompanyData.length > 0) {
-              _companySelectBottomSheet(context);
-            } else
-              GetCompanyName();
-          },
-          child: Card(
-            elevation: 2,
-            child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: 60,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child:
-                          Image.network('$IMG_URL' + '$_selectedCompanyLogo')),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        _selectedCompanyName == null
-                            ? 'Select Company Name'
-                            : '$_selectedCompanyName',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
+        _selectedVisitorType != "Guest"
+            ? Padding(
+                padding: const EdgeInsets.all(6.0),
+                child: Text(
+                  "Company Name",
+                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                ),
+              )
+            : Container(),
+        _selectedVisitorType != "Guest"
+            ? InkWell(
+                onTap: () {
+                  if (CompanyData.length > 0) {
+                    _companySelectBottomSheet(context);
+                  } else
+                    GetCompanyName();
+                },
+                child: Card(
+                  elevation: 2,
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: 60,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Image.network(
+                                '$IMG_URL' + '$_selectedCompanyLogo')),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              _selectedCompanyName == null
+                                  ? 'Select Company Name'
+                                  : '$_selectedCompanyName',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                        Icon(Icons.chevron_right)
+                      ],
                     ),
                   ),
-                  Icon(Icons.chevron_right)
-                ],
-              ),
-            ),
-          ),
-        ),
+                ),
+              )
+            : Container(),
         Padding(
           padding: const EdgeInsets.all(6.0),
           child: Text(
@@ -714,13 +718,19 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
                             color: Colors.white,
                           ),
                         ),
-                        Checkbox(
-                          value: mask,
-                          onChanged: (bool value) {
-                            setState(() {
-                              mask = value;
-                            });
-                          },
+                        Theme(
+                          data: ThemeData(
+                            unselectedWidgetColor: Colors.white,
+                          ),
+                          child: Checkbox(
+                            value: mask,
+                            checkColor: Colors.white,
+                            onChanged: (bool value) {
+                              setState(() {
+                                mask = value;
+                              });
+                            },
+                          ),
                         ),
                       ],
                     ),
@@ -741,13 +751,18 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
                             color: Colors.white,
                           ),
                         ),
-                        Checkbox(
-                          value: sanitized,
-                          onChanged: (bool value) {
-                            setState(() {
-                              sanitized = value;
-                            });
-                          },
+                        Theme(
+                          data: ThemeData(
+                            unselectedWidgetColor: Colors.white,
+                          ),
+                          child: Checkbox(
+                            value: sanitized,
+                            onChanged: (bool value) {
+                              setState(() {
+                                sanitized = value;
+                              });
+                            },
+                          ),
                         ),
                       ],
                     ),
@@ -876,7 +891,7 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
                           ),
                         ],
                       ),
-                      color: Colors.green,
+                      color: appPrimaryMaterialColor,
                       onPressed: () {
                         SaveVisitorData();
                       })),
@@ -1060,6 +1075,7 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
                           child: InkWell(
                             onTap: () {
                               if (VisitorTypeData.length > 0) {
+                                print(_selectedVisitorType);
                                 setState(() {
                                   _selectedVisitorType =
                                       VisitorTypeData[index]["VisitorTypeName"];
