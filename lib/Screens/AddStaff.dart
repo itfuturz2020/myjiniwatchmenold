@@ -105,9 +105,14 @@ class _AddStaffState extends State<AddStaff> {
         res.then((data) async {
           if (data != null && data.length > 0) {
             setState(() {
+              for(int i=0;i<data.length;i++){
+                if(!wingclasslist.contains(data[i]["FlatNo"])){
+                  wingclasslist.add(data[i]);
+                }
+              }
               _WingLoading = false;
-              wingclasslist = data;
             });
+
           } else {
             setState(() {
               _WingLoading = false;

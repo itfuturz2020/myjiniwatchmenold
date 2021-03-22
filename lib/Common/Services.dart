@@ -90,7 +90,7 @@ class Services {
         var responseData = json.decode(jsonData);
 
         print(
-            "SaveDocument Response: " + responseData["ResultData"].toString());
+            "SaveDocument Responsefil: " + responseData["ResultData"].toString());
 
         saveData.Message = responseData["ResultData"]["Message"].toString();
         saveData.IsSuccess =
@@ -1572,6 +1572,34 @@ class Services {
       }
     } catch (e) {
       print("Error getCompany   : ${e.toString()}");
+      throw Exception(e.toString());
+    }
+  }
+
+  static Future<List> getPurpose() async {
+    String url = API_URL + 'GetPurpose';
+    print("GetPurpose url : " + url);
+    try {
+      final response = await dio.get(
+        url,
+      );
+      if (response.statusCode == 200) {
+        List list = [];
+        print("GetPurpose Response: " + response.data.toString());
+        var CompanyTypeData = response.data;
+        if (CompanyTypeData["IsSuccess"] == true) {
+          print(CompanyTypeData["Data"]);
+          list = CompanyTypeData["Data"];
+        } else {
+          list = [];
+        }
+        return list;
+      } else {
+        print("Error GetPurpose");
+        throw Exception(response.data.toString());
+      }
+    } catch (e) {
+      print("Error GetPurpose   : ${e.toString()}");
       throw Exception(e.toString());
     }
   }

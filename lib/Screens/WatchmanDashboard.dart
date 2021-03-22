@@ -217,11 +217,13 @@ class _WatchmanDashboardState extends State<WatchmanDashboard> {
 
         pr.show();
 
+        print('_visitordata[0]["lastentry"].toString().isNotEmpty');
+        print(_visitordata[0]["lastentry"].isNotEmpty);
         var formData = {
           "Id": "0",
           "SocietyId": SocietyId,
-          "TypeId": _visitordata[0]["lastentry"] != null  ?  _visitordata[0]["lastentry"]["TypeId"] : "",
-          "Type": _visitordata[0]["lastentry"] != null ? _visitordata[0]["lastentry"]["Type"] : "",
+          "TypeId": _visitordata[0]["lastentry"].isNotEmpty  ?  _visitordata[0]["lastentry"]["TypeId"] : "",
+          "Type": _visitordata[0]["lastentry"].isNotEmpty ? _visitordata[0]["lastentry"]["Type"] : "",
           "Purpose": "",
           "VehicleNo": txtvehicle.text,
           "WorkId": _visitordata[0]["worklist"]

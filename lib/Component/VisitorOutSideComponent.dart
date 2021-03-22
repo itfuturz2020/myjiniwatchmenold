@@ -14,6 +14,34 @@ class VisitorOutSideComponent extends StatefulWidget {
 }
 
 class _VisitorOutSideComponentState extends State<VisitorOutSideComponent> {
+
+  var date,newDt,monthNumber,dateNumber;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    if(int.parse(widget._visitorOutSideList["Date"].toString().split(" ")[0].split("/")[0])< 10){
+      monthNumber = "0" + widget._visitorOutSideList["Date"].toString().split(" ")[0].split("/")[0];
+    }
+    else{
+      monthNumber = widget._visitorOutSideList["Date"].toString().split(" ")[0].split("/")[0];
+    }
+    if(int.parse(widget._visitorOutSideList["Date"].toString().split(" ")[0].split("/")[1])< 10){
+      dateNumber = "0" + widget._visitorOutSideList["Date"].toString().split(" ")[0].split("/")[1];
+    }
+    else{
+      dateNumber = widget._visitorOutSideList["Date"].toString().split(" ")[0].split("/")[1];
+    }
+    date = DateTime.parse(
+        widget._visitorOutSideList["Date"].toString().split(" ")[0].split("/")[2]+
+            "-"+
+            monthNumber +
+        "-"
+            +dateNumber+ " "+
+    "00:00:00.000000");
+    newDt = DateFormat.yMMMEd().format(date);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -52,6 +80,14 @@ class _VisitorOutSideComponentState extends State<VisitorOutSideComponent> {
                       "Flat No: ${widget._visitorOutSideList["WingId"]}- ${widget._visitorOutSideList["FlatId"]}"),
                 )
               ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(right:35.0),
+            child: Text("$newDt",
+            style: TextStyle(
+              color: Colors.red
+            ),
             ),
           ),
           IconButton(

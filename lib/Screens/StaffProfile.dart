@@ -6,6 +6,7 @@ import 'package:smartsocietystaff/Common/ClassList.dart';
 import 'package:smartsocietystaff/Common/Constants.dart' as constant;
 import 'package:smartsocietystaff/Common/Services.dart';
 import 'package:smartsocietystaff/Component/masktext.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'AddDocument.dart';
 
@@ -26,8 +27,10 @@ class _StaffProfileState extends State<StaffProfile> {
   TextEditingController workText = new TextEditingController();
   TextEditingController purposeText = new TextEditingController();
 
-  List<WingClass> wingclasslist = [];
+  List<dynamic> wingclasslist = [];
   WingClass wingClass;
+  String SocietyId;
+  String selectedWing;
   List _selectedFlatlist = [];
   List FlatData = [];
   List allWingList = [];
@@ -39,6 +42,77 @@ class _StaffProfileState extends State<StaffProfile> {
     // TODO: implement initState
     super.initState();
     setData();
+    _WingListData();
+  }
+
+  _WingListData() async {
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        SocietyId = prefs.getString(constant.Session.SocietyId);
+        Future res = Services.GetWinglistData(SocietyId);
+        res.then((data) async {
+          if (data != null && data.length > 0) {
+            setState(() {
+              allWingList = data;
+            });
+          } else {
+            // setState(() {
+            //   _WingLoading = false;
+            // });
+          }
+        }, onError: (e) {
+          // setState(() {
+          //   _WingLoading = false;
+          // });
+          // Fluttertoast.showToast(
+          //     msg: "Something Went Wrong", toastLength: Toast.LENGTH_LONG);
+        });
+      }
+    } on SocketException catch (_) {
+      // setState(() {
+      //   _WingLoading = false;
+      // });
+      // Fluttertoast.showToast(
+      //     msg: "No Internet Access", toastLength: Toast.LENGTH_LONG);
+    }
+  }
+
+  _getWingList() async {
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        Future res = Services.getWingList();
+        res.then((data) async {
+          if (data != null && data.length > 0) {
+            setState(() {
+              wingclasslist = data;
+            });
+          } else {
+            setState(() {
+              // isLoading = false;
+            });
+          }
+        }, onError: (e) {
+
+          showHHMsg("Something Went Wrong Please Try Again","");
+          setState(() {
+            // isLoading = false;
+          });
+        });
+      } else {
+        showHHMsg("No Internet Connection.","");
+        setState(() {
+          // isLoading = false;
+        });
+      }
+    } on SocketException catch (_) {
+      showHHMsg("No Internet Connection.","");
+      setState(() {
+        // isLoading = false;
+      });
+    }
   }
 
   setData() {
@@ -48,22 +122,31 @@ class _StaffProfileState extends State<StaffProfile> {
     workText.text = widget.staffData["Work"];
     purposeText.text = widget.staffData["Purpose"];
     addressText.text = widget.staffData["Address"];
+
+    _getWingList();
   }
 
-  GetFlatData(String WingId) async {
+  GetFlatData(String wingname) async {
     try {
       //check Internet Connection
       final result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-        setState(() {
-          pr.show();
-        });
-
-        Services.getFlatData(WingId).then((data) async {
-          setState(() {
-            pr.hide();
-          });
+        // setState(() {
+        //   pr.show();
+        // });
+        String wingid = "";
+        for(int i=0;i<wingclasslist.length;i++){
+          if(wingclasslist[i]["WingName"]==wingname){
+            wingid = wingclasslist[i]["Id"].toString();
+          }
+        }
+        Services.getFlatData(wingid.toString()).then((data) async {
+          // setState(() {
+          //   pr.hide();
+          // });
           if (data != null && data.length > 0) {
+            print("data");
+            print(data);
             setState(() {
               FlatData = data;
             });
@@ -114,7 +197,6 @@ class _StaffProfileState extends State<StaffProfile> {
 
   @override
   Widget build(BuildContext context) {
-    print(widget.staffData);
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -262,7 +344,7 @@ class _StaffProfileState extends State<StaffProfile> {
                     child: Padding(
                       padding: const EdgeInsets.only(left: 4.0),
                       child: DropdownButtonHideUnderline(
-                          child: DropdownButton<WingClass>(
+                          child: DropdownButton<dynamic>(
                         icon: Icon(
                           Icons.chevron_right,
                           size: 20,
@@ -275,21 +357,20 @@ class _StaffProfileState extends State<StaffProfile> {
                                 "Wing Not Found",
                                 style: TextStyle(fontSize: 14),
                               ),
-                        value: wingClass,
+                        value: selectedWing,
                         onChanged: (val) {
-                          print(val.WingName);
                           setState(() {
-                            wingClass = val;
+                            selectedWing = val;
                             _selectedFlatlist.clear();
                             FlatData.clear();
                           });
-                          GetFlatData(val.WingId);
+                          GetFlatData(val);
                         },
-                        items: wingclasslist.map((WingClass wingclass) {
-                          return new DropdownMenuItem<WingClass>(
-                            value: wingclass,
+                        items: wingclasslist.map((dynamic value) {
+                          return new DropdownMenuItem<String>(
+                            value: value["WingName"],
                             child: Text(
-                              wingclass.WingName,
+                              value["WingName"],
                               style: TextStyle(color: Colors.black),
                             ),
                           );
@@ -338,6 +419,12 @@ class _StaffProfileState extends State<StaffProfile> {
                         style: TextStyle(fontSize: 24, color: Colors.white),
                       ),
                       onPressed: () {
+                        print("allWingList");
+                        print(allWingList);
+                        print("_selectedFlatlist");
+                        print(_selectedFlatlist);
+                        print("finalSelectList");
+                        print(finalSelectList);
                         if (!allWingList.contains(wingClass)) {
                           for (int i = 0; i < _selectedFlatlist.length; i++) {
                             finalSelectList.add({

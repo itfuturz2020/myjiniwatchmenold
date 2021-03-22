@@ -58,10 +58,12 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
   List VisitorTypeData = new List();
   List FlatData = new List();
   List CompanyData = new List();
+  List purposeData = new List();
   ProgressDialog pr;
 
   List<WingClass> _winglist = [];
   WingClass _wingClass;
+  String purposeSelected ;
   bool mask = false;
   bool sanitized = false;
 
@@ -172,6 +174,7 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
               _WingLoading = false;
               _winglist = data;
             });
+            GetPurpose();
           } else {
             setState(() {
               _WingLoading = false;
@@ -270,7 +273,7 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
               "MSId": "",
               "CompanyName": _selectedCompanyName,
               "VisitorTypeId": _selectedvisitorId.toString(),
-              "Purpose": purposeText.text,
+              "Purpose": purposeSelected,
               "VehicleNo": vehiclenotext.text,
               "WingId": _wingClass.WingId,
               "FlatId": _FlateNo,
@@ -653,6 +656,7 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
                     : textKeyboard(),
               ),
             ),
+/*
             Padding(
               padding: const EdgeInsets.all(10.0),
               child: SizedBox(
@@ -681,6 +685,7 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
                 ),
               ),
             ),
+*/
             Padding(
               padding: const EdgeInsets.all(10.0),
               child: SizedBox(
@@ -698,6 +703,57 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
                       hasFloatingPlaceholder: true,
                       labelStyle: TextStyle(fontSize: 13)),
                 ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                width: MediaQuery.of(context).size.width*0.948,
+                decoration: BoxDecoration(
+                    border: Border.all(width: 1),
+                    borderRadius:
+                    BorderRadius.all(Radius.circular(6.0,
+                    ),
+                    ),
+                ),
+
+
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 8.0),
+                  child: DropdownButtonHideUnderline(
+                      child: DropdownButton<dynamic>(
+                        icon: Icon(
+                          Icons.arrow_drop_down,
+                          size: 20,
+                        ),
+                        hint: purposeData.length > 0
+                            ? Text("Select Purpose Of Visitor",
+                            style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600))
+                            : Text(
+                          "Purpose Not Found",
+                          style: TextStyle(fontSize: 14),
+                        ),
+                        value: purposeSelected,
+                        onChanged: (val) {
+                          setState(() {
+                            purposeSelected = val;
+                          });
+                        },
+                        items: purposeData.map((dynamic value) {
+                          return new DropdownMenuItem<dynamic>(
+                            value: value,
+                            child: Text(
+                              value,
+                              style: TextStyle(color: Colors.black),
+                            ),
+                          );
+                        }).toList(),
+                      )),
+                ),
+
+
               ),
             ),
             Row(
@@ -1013,6 +1069,50 @@ class _AddVisitorFormState extends State<AddVisitorForm> {
               CompanyData = data;
             });
             _companySelectBottomSheet(context);
+          } else {
+            setState(() {
+              pr.hide();
+            });
+          }
+        }, onError: (e) {
+          setState(() {
+            pr.hide();
+          });
+          showHHMsg("Try Again.", "");
+        });
+      } else {
+        setState(() {
+          pr.hide();
+        });
+        showHHMsg("No Internet Connection.", "");
+      }
+    } on SocketException catch (_) {
+      showHHMsg("No Internet Connection.", "");
+    }
+  }
+
+  GetPurpose() async {
+    try {
+      //check Internet Connection
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        setState(() {
+          pr.show();
+        });
+
+        Services.getPurpose().then((data) async {
+          setState(() {
+            pr.hide();
+          });
+          if (data != null && data.length > 0) {
+            setState(() {
+              for(int i=0;i<data.length;i++){
+                purposeData.add(data[i]["Name"]);
+              }
+            });
+            print("purposeData");
+            print(purposeData);
+            // _companySelectBottomSheet(context);
           } else {
             setState(() {
               pr.hide();
